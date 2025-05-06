@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Minecraft Skin to Head</title>
+		<style>
+			@font-face {
+				font-family: 'minecraft-regular';
+				src: url('/fonts/MinecraftRegular-Bmg3.otf') format('truetype');
+				font-weight: normal;
+				font-style: normal;
+			}
+
+			.font-minecraft-regular {
+				font-family: 'minecraft-regular', sans-serif;
+			}
+		</style>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body class="min-h-screen flex items-center justify-center p-4 relative font-minecraft-regular">
+		<div class="absolute inset-0 bg-[url('/images/background.jpg')] bg-cover bg-center z-0"></div>
+		<div class="absolute inset-0 bg-black/70 z-10"></div>
+		<div class="max-w-md w-full bg-black/60 rounded-xl shadow-lg p-8 z-20 relative text-white backdrop-blur-sm">
+			<h1 class="text-2xl font-bold text-center mb-6">Preview & Download</h1>
+			<div id="imageContainer" class="mb-6 text-center">
+				<img id="previewImage" src="" alt="Uploaded Skin" class="mx-auto rounded-md shadow-md max-w-full max-h-80 border border-gray-700" />
+				<p class="mt-6 text-sm text-gray-400">Files will be deleted within 1 minute after upload.</p>
+			</div>
+			<div class="text-center">
+                <a id="downloadBtn" href="#" download class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition"> Download Image </a>
+                <a href="/" class="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition"> Back to Upload </a>
+			</div>
+		</div>
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				const urlParams = new URLSearchParams(window.location.search);
+				const imageName = urlParams.get('file');
+				if (imageName) {
+					const previewImage = document.getElementById('previewImage');
+					const downloadBtn = document.getElementById('downloadBtn');
+					previewImage.src = '/images/results/' + imageName;
+					downloadBtn.href = '/images/results/' + imageName;
+				} else {
+					document.getElementById('imageContainer').innerHTML = ' <p class="text-red-500"> No image found. </p>';
+				}
+			});
+		</script>
+	</body>
+</html>

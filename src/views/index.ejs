@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Minecraft Skin to Head</title>
+		<style>
+			@font-face {
+				font-family: 'minecraft-regular';
+				src: url('/fonts/MinecraftRegular-Bmg3.otf') format('truetype');
+				font-weight: normal;
+				font-style: normal;
+			}
+
+			.font-minecraft-regular {
+				font-family: 'minecraft-regular', sans-serif;
+			}
+		</style>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body class="min-h-screen flex items-center justify-center p-4 relative font-minecraft-regular">
+		<div class="absolute inset-0 bg-[url('/images/background.jpg')] bg-cover bg-center z-0"></div>
+		<div class="absolute inset-0 bg-black/70 z-10"></div>
+		<div class="max-w-md w-full bg-black/60 rounded-xl shadow-lg p-8 z-20 relative text-white backdrop-blur-sm">
+			<h1 class="text-2xl font-bold text-center mb-6">Minecraft Skin to Head</h1>
+			<form id="uploadForm" enctype="multipart/form-data">
+				<div id="dropZone" class="border-2 border-dashed border-green-400 rounded-lg p-8 text-center cursor-pointer transition-all hover:bg-gray-800 hover:border-green-500">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+					</svg>
+					<p class="text-gray-500 mb-1">Click or drag files here</p>
+					<p class="text-sm text-gray-400">Supported file formats: PNG</p>
+					<input type="file" id="fileInput" class="hidden" name="file" accept="image/png">
+				</div>
+				<div id="fileDetails" class="mt-4 bg-gray-800 p-4 rounded-lg hidden">
+					<p class="text-sm">
+						<span class="font-medium text-gray-500">File Name:</span>
+						<span id="fileName" class="text-gray-400"></span>
+					</p>
+					<p class="text-sm mt-1">
+						<span class="font-medium text-gray-500">Size:</span>
+						<span id="fileSize" class="text-gray-400"></span>
+					</p>
+					<p class="text-sm mt-1">
+						<span class="font-medium text-gray-500">Type:</span>
+						<span id="fileType" class="text-gray-400"></span>
+					</p>
+				</div>
+				<div id="progressContainer" class="h-2 w-full bg-gray-200 rounded-full mt-6 hidden">
+					<div id="progressBar" class="h-full bg-green-500 rounded-full w-0 transition-all duration-300"></div>
+				</div>
+				<div id="successMessage" class="mt-4 text-center text-green-600 hidden">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+					</svg> File uploaded successfully!
+				</div>
+				<div id="errorMessage" class="mt-4 text-center text-red-600 hidden">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg> An error occurred while uploading the file.
+				</div>
+			</form>
+		</div>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const dropZone = document.getElementById('dropZone');
+				const fileInput = document.getElementById('fileInput');
+				const uploadForm = document.getElementById('uploadForm');
+				const progressContainer = document.getElementById('progressContainer');
+				const progressBar = document.getElementById('progressBar');
+				const successMessage = document.getElementById('successMessage');
+				const errorMessage = document.getElementById('errorMessage');
+				const fileDetails = document.getElementById('fileDetails');
+				const fileNameElement = document.getElementById('fileName');
+				const fileSizeElement = document.getElementById('fileSize');
+				const fileTypeElement = document.getElementById('fileType');
+				dropZone.addEventListener('click', function() {
+					fileInput.click();
+				});
+				fileInput.addEventListener('change', function() {
+					const file = fileInput.files[0];
+					if (file && file.type === 'image/png') {
+						showFileDetails(file);
+						submitForm();
+					} else {
+						showInvalidFileError();
+					}
+				});
+				dropZone.addEventListener('dragover', function(e) {
+					e.preventDefault();
+					dropZone.classList.add('bg-green-50');
+					dropZone.classList.add('border-green-500');
+				});
+				dropZone.addEventListener('dragleave', function(e) {
+					e.preventDefault();
+					dropZone.classList.remove('bg-green-50');
+					dropZone.classList.remove('border-green-500');
+				});
+				dropZone.addEventListener('drop', function(e) {
+					e.preventDefault();
+					dropZone.classList.remove('bg-green-50');
+					dropZone.classList.remove('border-green-500');
+					const file = e.dataTransfer.files[0];
+					if (file && file.type === 'image/png') {
+						fileInput.files = e.dataTransfer.files;
+						showFileDetails(file);
+						submitForm();
+					} else {
+						showInvalidFileError();
+					}
+				});
+
+				function showFileDetails(file) {
+					fileNameElement.textContent = file.name;
+					fileSizeElement.textContent = formatFileSize(file.size);
+					fileTypeElement.textContent = file.type || 'Unknown';
+					fileDetails.classList.remove('hidden');
+				}
+
+				function formatFileSize(bytes) {
+					if (bytes < 1024) {
+						return bytes + ' bytes';
+					} else if (bytes < 1048576) {
+						return (bytes / 1024).toFixed(2) + ' KB';
+					} else {
+						return (bytes / 1048576).toFixed(2) + ' MB';
+					}
+				}
+
+				function submitForm() {
+					successMessage.classList.add('hidden');
+					errorMessage.classList.add('hidden');
+					progressContainer.classList.remove('hidden');
+					progressBar.style.width = '0%';
+					const formData = new FormData(uploadForm);
+					let progress = 0;
+					const simulateProgress = setInterval(() => {
+						if (progress < 95) {
+							progress += Math.random() * 5;
+							progressBar.style.width = `${Math.min(progress, 95)}%`;
+						}
+					}, 100);
+					fetch('/upload', {
+						method: 'POST',
+						body: formData,
+					}).then(response => response.json()).then(data => {
+						clearInterval(simulateProgress);
+						progressBar.style.width = '100%';
+						setTimeout(() => {
+							progressContainer.classList.add('hidden');
+							if (data.success) {
+								successMessage.classList.remove('hidden');
+								window.location.href = `/result?file=${data.fileName}`;
+							} else {
+								errorMessage.textContent = data.message || 'File upload failed.';
+								errorMessage.classList.remove('hidden');
+							}
+						}, 1000);
+					}).catch(error => {
+						clearInterval(simulateProgress);
+						progressContainer.classList.add('hidden');
+						errorMessage.textContent = 'Network error occurred while uploading the file.';
+						errorMessage.classList.remove('hidden');
+						console.error('Upload error:', error);
+					});
+				}
+			});
+
+			function showInvalidFileError() {
+				errorMessage.textContent = 'Only PNG files are allowed.';
+				errorMessage.classList.remove('hidden');
+				successMessage.classList.add('hidden');
+				progressContainer.classList.add('hidden');
+				fileDetails.classList.add('hidden');
+			}
+		</script>
+	</body>
+</html>
