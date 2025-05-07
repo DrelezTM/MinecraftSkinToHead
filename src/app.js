@@ -18,7 +18,11 @@ function deletingFiles(uploadedFileName, resultFileName) {
 
 		filesToDelete.forEach(file => {
 			fs.unlink(file, (err) => {
-				if (err.code !== 'ENOENT') { console.error(`[!] Error deleting ${file}:`, err); }
+				if (err && err.code !== 'ENOENT') {
+					console.error(`[!] Error deleting ${file}:`, err);
+				} else {
+					console.log(`[!] Successfully deleted ${file}`);
+				}
 			});
 		});
 	}, 1 * 60 * 1000);
