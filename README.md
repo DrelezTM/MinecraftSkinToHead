@@ -1,6 +1,6 @@
 # Minecraft Skin to Head
 <p align="center">
-  <img alt="@minecrafthead" style="width: 150px;" src="https://raw.githubusercontent.com/DrelezTM/MinecraftSkinToHead/refs/heads/main/public/images/logo.png?token=GHSAT0AAAAAADDA3OKNJENRB3EB4U3YV65Q2A3F2XQ">
+  <img alt="@minecrafthead" style="width: 150px;" src="https://github.com/DrelezTM/MinecraftSkinToHead/blob/main/public/images/logo.png?raw=true">
 </p>
 <div align="center">
   <h3>Minecraft Skin to Head</h3>
